@@ -20,7 +20,8 @@
     "test": "vitest --run --globals",
     "benchmark": "vitest bench --run --globals",
     "lint": "eslint src/**/*.ts",
-    "format": "eslint src/**/*.ts --fix"
+    "format": "eslint src/**/*.ts --fix",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
