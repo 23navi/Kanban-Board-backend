@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 
 import { MONGO_URI, PORT, NODE_ENV } from './config';
 import { connectToMongodb } from './connections/mongodb';
+import errorHandler from './middlewares/error-handler';
 
 const app = express();
 const httpServer = createServer(app);
