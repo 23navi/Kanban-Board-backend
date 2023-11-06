@@ -32,13 +32,13 @@ const registerUser = async (req: Request<{}, {}, CreateUserInput>, res: Response
     username: newUser.name,
   });
 
-  // await sendEmail({
-  //   from: "navisureka23@gmail.com",
-  //   to: "smadhvi89@gmail.com",
-  //   subject: "Test",
-  //   text: "Test",
-  //   html: ejsHtml,
-  // });
+  await sendEmail({
+    from: 'navisureka23@gmail.com',
+    to: newUser.email,
+    subject: 'Please verify your email',
+    // text: 'Test',
+    html: ejsHtml,
+  });
 
   await newUser.save();
 
