@@ -1,9 +1,11 @@
-name: Deploy website
+name: Run the test on feature push
 on:
   push:
     branches:
       - '*'
       - '!main'
+      - '!staging'
+      - '!develop'
 jobs:
   test:
     runs-on: ubuntu-latest
