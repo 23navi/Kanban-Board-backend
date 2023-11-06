@@ -1,13 +1,14 @@
-// import { ValidationError } from "express-validator";
-import { CustomError } from "./custom-error";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { CustomError } from './custom-error';
 
-import { ValidationError } from "zod-validation-error";
+// @ts-ignore
+import { ValidationError } from 'zod-validation-error';
 
 export class RequestValidationError extends CustomError {
   statusCode = 400;
 
   constructor(public errors: ValidationError) {
-    super("Invalid request parameters");
+    super('Invalid request parameters');
 
     // Only because we are extending a built in class
     Object.setPrototypeOf(this, RequestValidationError.prototype);
@@ -26,7 +27,7 @@ export class RequestValidationError extends CustomError {
 
   // This is for zod's error validator
   serializeErrors() {
-    console.log("This is running");
+    console.log('This is running');
     return this.errors.details;
   }
 }
