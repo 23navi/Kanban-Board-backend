@@ -1,4 +1,6 @@
-import { ValidationError } from "zod-validation-error";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import { ValidationError } from 'zod-validation-error';
 export abstract class CustomError extends Error {
   abstract statusCode: number;
 
@@ -8,7 +10,5 @@ export abstract class CustomError extends Error {
     Object.setPrototypeOf(this, CustomError.prototype);
   }
 
-  abstract serializeErrors():
-    | { message: string; field?: string }[]
-    | ValidationError["details"];
+  abstract serializeErrors(): { message: string; field?: string }[] | ValidationError['details'];
 }
