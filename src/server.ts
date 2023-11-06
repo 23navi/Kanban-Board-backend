@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors'; // Handles all async errors
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
