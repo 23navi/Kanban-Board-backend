@@ -13,6 +13,6 @@ cron.schedule(
     }
   },
   {
-    timezone: 'your_timezone', // Set your desired timezone, for example, 'America/New_York'
+    timezone: 'Asia/Kolkata',
   },
 );
