@@ -10,10 +10,16 @@ import errorHandler from './middlewares/error-handler';
 import routes from './routes';
 import { deleteExpiredSession, testCron } from './corns';
 import deserializeUser from './middlewares/deserialize-user';
+import SocketEventsEnum from './utils/socket.enum';
+import { joinBoard, leaveBoard } from './controllers/sockets/board.socket.controller';
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+  },
+});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -27,8 +33,14 @@ app.use(routes);
 
 app.use(errorHandler);
 
-io.on('connection', () => {
+io.on('connection', (socket) => {
   console.log('connect');
+  socket.on(SocketEventsEnum.boardsJoin, (data) => {
+    joinBoard(io, socket, data);
+  });
+  socket.on(SocketEventsEnum.boardsLeave, (data) => {
+    leaveBoard(io, socket, data);
+  });
 });
 
 app.listen(PORT, () => {
