@@ -33,6 +33,11 @@ export interface UserDoc extends mongoose.Document {
   };
   role: string;
   isVerified: boolean;
+  verificationOTP: number;
+  verificationOTPExpiration: Date;
+  passwordChangeOTP: number;
+  passwordChangeOTPExpiration: Date;
+  passwordChangedAt: Date;
 }
 
 // This is the schema for the User but not the typescript schema

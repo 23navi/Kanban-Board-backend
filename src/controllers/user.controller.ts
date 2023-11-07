@@ -12,27 +12,36 @@ import path from 'path';
 // For ejs opt validation mail, we have to enter (data= {otpValidity:number,username:string,otp:number})
 
 const registerUser = async (req: Request<{}, {}, CreateUserInput>, res: Response, next: NextFunction) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, username } = req.body;
 
-  const existingUser = await User.findOne({ email: email });
+  const existingUser = await User.findOne({ $or: [{ email: email }, { username: username }] });
 
-  if (existingUser) {
+  if (existingUser?.email === email) {
     throw new ResourceAlreadyExistError('Try other email id');
+  }
+  if (existingUser?.username === username) {
+    throw new ResourceAlreadyExistError('Try other username');
   }
 
   const newUser = await User.create({
     name,
     email,
     password,
+    username,
   });
+
+  const verificationDetails = createValidation(newUser.email);
+
+  newUser.verificationOTP = verificationDetails.otp;
+  newUser.verificationOTPExpiration = new Date(verificationDetails.expiryTimeInMs);
 
   const ejsHtml = await ejs.renderFile(path.join(__dirname, '..', 'mails', 'activation-mail.ejs'), {
-    otpValidity: 5,
-    otp: 1234,
-    username: newUser.name,
+    otpValidity: verificationDetails.otpValidity,
+    otp: verificationDetails.otp,
+    username: newUser.username,
   });
 
-  await sendEmail({
+  sendEmail({
     from: 'navisureka23@gmail.com',
     to: newUser.email,
     subject: 'Please verify your email',
@@ -44,7 +53,7 @@ const registerUser = async (req: Request<{}, {}, CreateUserInput>, res: Response
 
   const getUser = await User.findById(newUser._id);
 
-  res.status(201).json({ user: getUser });
+  return res.status(201).json({ user: newUser });
 
   // This is already handled by zod
   //   if (password !== passwordConfirmation) {
@@ -57,6 +66,7 @@ interface IValidation {
   otpValidity: string;
   otp: number;
   jwtToken: string;
+  expiryTimeInMs: number;
 }
 
 function generateOTP() {
@@ -64,12 +74,12 @@ function generateOTP() {
   const otp = Math.floor(1000 + Math.random() * 9000);
   return otp;
 }
-export const creeateValidation = (userEmail: string): IValidation => {
+export const createValidation = (userEmail: string): IValidation => {
   const otp = generateOTP();
   const expiryTimeInMs = Date.now() + 5 * 60 * 1000; // 5 minutes from now
   const jwtToken = jwt.sign({ email: userEmail, otp: otp }, process.env.JWT_VALIDATION_SECRET!, {
     expiresIn: expiryTimeInMs,
   });
 
-  return { otpValidity: '5 minutes', otp, jwtToken };
+  return { expiryTimeInMs, otpValidity: '5 minutes', otp, jwtToken };
 };
