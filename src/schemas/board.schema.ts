@@ -2,9 +2,8 @@ import { object, string, TypeOf } from 'zod';
 import isValidMongodbId from '../utils/isValidMongodbId';
 
 export const createBoardSchema = object({
-  body: object({}),
-  params: object({
-    id: string(),
+  body: object({
+    title: string(),
   }),
 });
 
