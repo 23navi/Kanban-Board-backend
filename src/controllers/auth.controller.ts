@@ -10,19 +10,20 @@ import { findSessionById, signAccessToken, signRefreshToken } from '../services/
 import { verifyJwt } from '../utils/jwt';
 import Session from '../models/session.model';
 import { Password } from '../utils/password';
+import { BadRequestError, ForbiddenRequestError } from '../errors';
 
 export async function creatSessionHandler(req: Request<{}, {}, CreateSessionInput>, res: Response) {
   const { email, password: candidatePassword } = req.body;
   const user = await findUserByEmail(email);
   if (!user) {
-    return res.json({ message: 'Email/password not correct' });
+    throw new BadRequestError('Email/password not correct');
   }
   if (user.isVerified) {
-    return res.json({ message: 'Verify your account first' });
+    throw new ForbiddenRequestError("'Verify your account first'");
   }
 
   if (!(await Password.compare(user.password, candidatePassword))) {
-    return res.json({ message: 'Email/password not correct' });
+    throw new BadRequestError('Email/password not correct');
   }
 
   /// If we reach here, we will know that user provided correct creds, we need to provide them with token.
@@ -46,7 +47,6 @@ export async function creatSessionHandler(req: Request<{}, {}, CreateSessionInpu
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
   });
   res.cookie('refresh_token', refreshToken);
-
   res.send({ accessToken, refreshToken });
 }
 

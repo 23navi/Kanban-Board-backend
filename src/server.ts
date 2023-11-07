@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { MONGO_URI, PORT, NODE_ENV } from './config';
 import { connectToMongodb } from './connections/mongodb';
 import errorHandler from './middlewares/error-handler';
+import routes from './routes';
 
 const app = express();
 const httpServer = createServer(app);
@@ -29,6 +30,7 @@ app.get('/healthcheck', (req, res) => {
     },
   });
 });
+app.use(routes);
 
 app.use(errorHandler);
 
