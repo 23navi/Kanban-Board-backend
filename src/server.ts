@@ -21,16 +21,6 @@ app.get('/', (req, res) => {
   res.send('API is UP');
 });
 
-app.get('/healthcheck', (req, res) => {
-  res.status(200).json({
-    status: 'available',
-    systemInfo: {
-      env: process.env.NODE_ENV,
-
-      version: process.env.npm_package_version,
-    },
-  });
-});
 app.use(routes);
 
 app.use(errorHandler);
@@ -47,4 +37,4 @@ app.listen(PORT, () => {
 
 // Running cron jobs
 deleteExpiredSession();
-testCron();
+// testCron();
