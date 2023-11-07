@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Request, Response, NextFunction } from 'express';
-import { GetBoardByIdInput, CreateBoardSchemaInput } from '../schemas/board.schema';
+import {
+  GetBoardByIdInput,
+  CreateBoardSchemaInput,
+  UpdateBoardByIdInputParam,
+  UpdateBoardByIdInputBody,
+  DeleteBoardByIdInputParam,
+} from '../schemas/board.schema';
 
 const getAllBoards = async (req: Request, res: Response, next: NextFunction) => {
   // We will get board for currently logged in user, we don't need to take in userId as input
@@ -15,4 +21,16 @@ const createBoard = async (req: Request<{}, {}, CreateBoardSchemaInput>, res: Re
   return res.send('New board with title = ' + req.body.title);
 };
 
-export { getAllBoards, getBoardById, createBoard };
+const updateBoard = async (
+  req: Request<UpdateBoardByIdInputParam, {}, UpdateBoardByIdInputBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  return res.send('Updated board with title = ' + req.body.title + 'and id = ' + req.params.id);
+};
+
+const deleteBoard = async (req: Request<DeleteBoardByIdInputParam>, res: Response, next: NextFunction) => {
+  return res.send('Delete board with id ' + req.params.id);
+};
+
+export { getAllBoards, getBoardById, createBoard, updateBoard, deleteBoard };
