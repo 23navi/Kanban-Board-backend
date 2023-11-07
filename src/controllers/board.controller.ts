@@ -6,4 +6,8 @@ const getAllBoards = async (req: Request, res: Response, next: NextFunction) => 
   return res.send('All Boards for the give user');
 };
 
-export { getAllBoards };
+const getBoardById = async (req: Request, res: Response, next: NextFunction) => {
+  return res.send('Board with id ' + req.params.id);
+};
+
+export { getAllBoards, getBoardById };
