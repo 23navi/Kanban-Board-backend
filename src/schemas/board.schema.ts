@@ -18,3 +18,17 @@ export const getBoardByIdSchema = object({
 });
 
 export type GetBoardByIdInput = TypeOf<typeof getBoardByIdSchema>['params'];
+
+export const updateBoardSchema = object({
+  body: object({
+    title: string(),
+  }),
+  params: object({
+    id: string().refine(isValidMongodbId, {
+      message: 'Invalid Mongoose ObjectId',
+    }),
+  }),
+});
+
+export type UpdateBoardByIdInputParam = TypeOf<typeof updateBoardSchema>['params'];
+export type UpdateBoardByIdInputBody = TypeOf<typeof updateBoardSchema>['body'];
