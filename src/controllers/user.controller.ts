@@ -41,17 +41,17 @@ const registerUser = async (req: Request<{}, {}, CreateUserInput>, res: Response
     username: newUser.username,
   });
 
-  sendEmail({
-    from: 'navisureka23@gmail.com',
-    to: newUser.email,
-    subject: 'Please verify your email',
-    // text: 'Test',
-    html: ejsHtml,
-  });
+  // Not sending email in dev mode.
+  console.log({ OTP: verificationDetails.otp });
+  // sendEmail({
+  //   from: 'navisureka23@gmail.com',
+  //   to: newUser.email,
+  //   subject: 'Please verify your email',
+  //   // text: 'Test',
+  //   html: ejsHtml,
+  // });
 
   await newUser.save();
-
-  const getUser = await User.findById(newUser._id);
 
   return res.status(201).json({ user: newUser });
 
