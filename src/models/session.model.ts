@@ -13,7 +13,7 @@ interface SessionModel extends mongoose.Model<SessionDoc> {
 
 export interface SessionDoc extends mongoose.Document {
   user: mongoose.Schema.Types.ObjectId;
-  vaild: boolean;
+  valid: boolean;
 }
 
 const sessionSchema = new mongoose.Schema(

@@ -9,6 +9,7 @@ import { connectToMongodb } from './connections/mongodb';
 import errorHandler from './middlewares/error-handler';
 import routes from './routes';
 import { deleteExpiredSession, testCron } from './corns';
+import deserializeUser from './middlewares/deserialize-user';
 
 const app = express();
 const httpServer = createServer(app);
@@ -16,6 +17,7 @@ const io = new Server(httpServer);
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(deserializeUser);
 
 app.get('/', (req, res) => {
   res.send('API is UP');

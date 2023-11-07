@@ -60,7 +60,12 @@ const registerUser = async (req: Request<{}, {}, CreateUserInput>, res: Response
   //     return res.status(400).json({ message: "Passwords do not match" });
   //   }
 };
-export { registerUser };
+
+const currentUser = async (req: Request, res: Response, next: NextFunction) => {
+  // If user is logged in the deserialize middleware will add user to res.locals and this is behiend require auth middleware
+  return res.send({ user: res.locals.user });
+};
+export { registerUser, currentUser };
 
 interface IValidation {
   otpValidity: string;

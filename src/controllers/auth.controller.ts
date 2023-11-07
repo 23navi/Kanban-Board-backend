@@ -52,22 +52,27 @@ export async function creatSessionHandler(req: Request<{}, {}, CreateSessionInpu
 export async function refreshSessionHandler(req: Request, res: Response) {
   const refreshToken = (req.headers['x-refresh'] || '') as string | '';
   if (!refreshToken) {
-    return res.send('Invalid refresh token');
+    throw new BadRequestError('Invalid refresh token');
   }
   const decoded = verifyJwt<{ session: string }>(refreshToken, 'refreshTokenPrivateKey');
   if (!decoded) {
-    return res.send('Invalid refresh token');
+    throw new BadRequestError('Invalid refresh token');
   }
   const session = await findSessionById(decoded?.session);
-
-  if (!session || !session.vaild) {
-    return res.send('Could not refresh the token');
+  if (!session || !session.valid) {
+    throw new BadRequestError('Could not refresh the token');
   }
-
   const user = await findUserById(String(session.user));
   if (!user) {
-    return res.send('Could not refresh the token');
+    throw new BadRequestError('Could not refresh the token');
   }
   const accessToken = signAccessToken(user);
+  res.cookie('access_token', accessToken, {
+    secure: true, // secure only sends cookie if the request is over https, will not work in http
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'none',
+    httpOnly: true, // This is to prevent javascript from accessing the cookie.
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+  });
   return res.send({ accessToken });
 }
