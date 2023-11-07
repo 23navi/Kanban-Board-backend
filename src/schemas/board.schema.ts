@@ -32,3 +32,13 @@ export const updateBoardSchema = object({
 
 export type UpdateBoardByIdInputParam = TypeOf<typeof updateBoardSchema>['params'];
 export type UpdateBoardByIdInputBody = TypeOf<typeof updateBoardSchema>['body'];
+
+export const deleteBoardSchema = object({
+  params: object({
+    id: string().refine(isValidMongodbId, {
+      message: 'Invalid Mongoose ObjectId',
+    }),
+  }),
+});
+
+export type DeleteBoardByIdInputParam = TypeOf<typeof deleteBoardSchema>['params'];

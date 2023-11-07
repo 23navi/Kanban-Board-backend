@@ -5,6 +5,7 @@ import {
   CreateBoardSchemaInput,
   UpdateBoardByIdInputParam,
   UpdateBoardByIdInputBody,
+  DeleteBoardByIdInputParam,
 } from '../schemas/board.schema';
 
 const getAllBoards = async (req: Request, res: Response, next: NextFunction) => {
@@ -28,4 +29,8 @@ const updateBoard = async (
   return res.send('Updated board with title = ' + req.body.title + 'and id = ' + req.params.id);
 };
 
-export { getAllBoards, getBoardById, createBoard, updateBoard };
+const deleteBoard = async (req: Request<DeleteBoardByIdInputParam>, res: Response, next: NextFunction) => {
+  return res.send('Delete board with id ' + req.params.id);
+};
+
+export { getAllBoards, getBoardById, createBoard, updateBoard, deleteBoard };
