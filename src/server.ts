@@ -8,6 +8,7 @@ import { MONGO_URI, PORT, NODE_ENV } from './config';
 import { connectToMongodb } from './connections/mongodb';
 import errorHandler from './middlewares/error-handler';
 import routes from './routes';
+import { deleteExpiredSession, testCron } from './corns';
 
 const app = express();
 const httpServer = createServer(app);
@@ -43,3 +44,7 @@ app.listen(PORT, () => {
   console.info(`Server: Listening on port ${PORT} in ${NODE_ENV} mode`);
   console.info({ app_version: process.env.npm_package_version });
 });
+
+// Running cron jobs
+deleteExpiredSession();
+testCron();
