@@ -60,11 +60,13 @@ export async function refreshSessionHandler(req: Request, res: Response) {
   }
   const session = await findSessionById(decoded?.session);
 
-  if (!session || !session.vaild) {
+  if (!session || !session.valid) {
+    console.log('This is runnign?');
     return res.send('Could not refresh the token');
   }
 
   const user = await findUserById(String(session.user));
+  console.log(user);
   if (!user) {
     return res.send('Could not refresh the token');
   }
