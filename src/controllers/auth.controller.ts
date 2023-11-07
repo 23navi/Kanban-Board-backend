@@ -8,20 +8,19 @@ import { CreateSessionInput } from '../schemas/auth.schema';
 import { findUserByEmail, findUserById } from '../services/user.service';
 import { findSessionById, signAccessToken, signRefreshToken } from '../services/auth.service';
 import { verifyJwt } from '../utils/jwt';
-import Session from '../models/session.model';
 import { Password } from '../utils/password';
 import { BadRequestError, ForbiddenRequestError } from '../errors';
 
 export async function creatSessionHandler(req: Request<{}, {}, CreateSessionInput>, res: Response) {
   const { email, password: candidatePassword } = req.body;
   const user = await findUserByEmail(email);
+  console.log({ user });
   if (!user) {
     throw new BadRequestError('Email/password not correct');
   }
-  if (user.isVerified) {
-    throw new ForbiddenRequestError("'Verify your account first'");
+  if (!user.isVerified) {
+    throw new ForbiddenRequestError('Verify your account first');
   }
-
   if (!(await Password.compare(user.password, candidatePassword))) {
     throw new BadRequestError('Email/password not correct');
   }
@@ -50,28 +49,25 @@ export async function creatSessionHandler(req: Request<{}, {}, CreateSessionInpu
   res.send({ accessToken, refreshToken });
 }
 
-// export async function refreshSessionHandler(req: Request, res: Response) {
-//   const refreshToken = (req.headers["x-refresh"] || "") as string | "";
-//   if (!refreshToken) {
-//     return res.send("Invalid refresh token");
-//   }
-//   const decoded = verifyJwt<{ session: string }>(
-//     refreshToken,
-//     "refreshTokenPrivateKey"
-//   );
-//   if (!decoded) {
-//     return res.send("Invalid refresh token");
-//   }
-//   const session = await findSessionById(decoded?.session);
+export async function refreshSessionHandler(req: Request, res: Response) {
+  const refreshToken = (req.headers['x-refresh'] || '') as string | '';
+  if (!refreshToken) {
+    return res.send('Invalid refresh token');
+  }
+  const decoded = verifyJwt<{ session: string }>(refreshToken, 'refreshTokenPrivateKey');
+  if (!decoded) {
+    return res.send('Invalid refresh token');
+  }
+  const session = await findSessionById(decoded?.session);
 
-//   if (!session || !session.vaild) {
-//     return res.send("Could not refresh the token");
-//   }
+  if (!session || !session.vaild) {
+    return res.send('Could not refresh the token');
+  }
 
-//   const user = await findUserById(String(session.user));
-//   if (!user) {
-//     return res.send("Could not refresh the token");
-//   }
-//   const accessToken = signAccessToken(user);
-//   return res.send({ accessToken });
-// }
+  const user = await findUserById(String(session.user));
+  if (!user) {
+    return res.send('Could not refresh the token');
+  }
+  const accessToken = signAccessToken(user);
+  return res.send({ accessToken });
+}

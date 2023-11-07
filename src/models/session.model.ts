@@ -11,7 +11,10 @@ interface SessionModel extends mongoose.Model<SessionDoc> {
   build(attrs: SessionAttrs): SessionDoc;
 }
 
-export interface SessionDoc extends mongoose.Document {}
+export interface SessionDoc extends mongoose.Document {
+  user: mongoose.Schema.Types.ObjectId;
+  vaild: boolean;
+}
 
 const sessionSchema = new mongoose.Schema(
   {
