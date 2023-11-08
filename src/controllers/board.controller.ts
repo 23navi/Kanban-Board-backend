@@ -13,12 +13,18 @@ import { NotFoundError } from '../errors';
 const getAllBoards = async (req: Request, res: Response, next: NextFunction) => {
   // We will get board for currently logged in user, we don't need to take in userId as input
   const { _id: userId } = res.locals.user;
-  const boards = await Board.find({ _id: userId });
-  return res.send(boards);
+  const boards = await Board.find({ user: userId });
+  return res.send({ boards });
 };
 
 const getBoardById = async (req: Request<GetBoardByIdInput>, res: Response, next: NextFunction) => {
-  return res.send('Board with id ' + req.params.id);
+  const { _id: userId } = res.locals.user;
+  const id = req.params.id;
+  const board = await Board.findOne({ _id: id, user: userId });
+  if (!board) {
+    throw new NotFoundError('Board not found');
+  }
+  return res.send({ board });
 };
 
 const createBoard = async (req: Request<{}, {}, CreateBoardSchemaInput>, res: Response, next: NextFunction) => {
@@ -28,7 +34,7 @@ const createBoard = async (req: Request<{}, {}, CreateBoardSchemaInput>, res: Re
     user: res.locals.user._id,
   });
   await board.save();
-  return res.send(board);
+  return res.send({ board });
 };
 
 const updateBoard = async (
@@ -40,11 +46,20 @@ const updateBoard = async (
   if (!board) {
     throw new NotFoundError('Board not Found');
   }
-  return res.send('Updated board with title = ' + req.body.title + 'and id = ' + req.params.id);
+  board.title = req.body.title;
+  await board.save();
+  return res.send({ board });
 };
 
 const deleteBoard = async (req: Request<DeleteBoardByIdInputParam>, res: Response, next: NextFunction) => {
-  return res.send('Delete board with id ' + req.params.id);
+  const { _id: userId } = res.locals.user;
+  const id = req.params.id;
+  const board = await Board.findOneAndDelete({ _id: id, user: userId });
+  if (!board) {
+    throw new NotFoundError('Board not found');
+  }
+
+  return res.send({ status: 'ok' });
 };
 
 export { getAllBoards, getBoardById, createBoard, updateBoard, deleteBoard };
