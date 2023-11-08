@@ -18,6 +18,7 @@ const getBoardById = async (req: Request<GetBoardByIdInput>, res: Response, next
 };
 
 const createBoard = async (req: Request<{}, {}, CreateBoardSchemaInput>, res: Response, next: NextFunction) => {
+  // When we create a board, we should create 3 column and add that to this board, and owner of the column will be owner of board by default
   return res.send('New board with title = ' + req.body.title);
 };
 
